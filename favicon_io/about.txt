@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Ruge Boogie
+- Font Author: Copyright 2015 The Ruge Boogie Project Authors (https://github.com/googlefonts/ruge-boogie)
+- Font Source: http://fonts.gstatic.com/s/rugeboogie/v24/JIA3UVFwbHRF_GIWSMhKNROiPzUveSxy.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
