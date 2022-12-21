@@ -16,9 +16,10 @@
         <title>Synth</title>
     </head>
     <body>
+        <!--Main Synth Div-------------------------------------------------------------->
         <div id="synth">
             <h4>Racoon Synth</h4>
-            <!-- Top Row --- Volume and Tempo Controls -->
+            <!-- Top Row ---Volume and Tempo Controls-------------------------------->
             <div id="top-row">
                 <button id="start-button">Start Loop</button>
                 <button id="stop-button">Stop Loop</button><br />
@@ -42,13 +43,12 @@
                 /><br />
             </div>
 
+            <!--Loop Note Selection-------------------------------->
             <div id="note-selects-div">
                 <h2>Notes</h2>
             </div>
 
-            <!-- Middle Row ---------------- Oscillator and Envelope
-            
-            -->
+            <!--Middle Row ---------------- Oscillator Options------------->
             <div id="middle-row">
                 <div id="oscillator-options">
                     <h2>Oscillator</h2>
@@ -88,6 +88,8 @@
                         name="waveform"
                         value="fm"
                     />
+
+                    <!-- Frequency Modulator---------------------->
                     <label for="freq-mod">Freq Mod</label><br />
 
                     <input
@@ -108,7 +110,7 @@
                     >
 
                     <br />
-                 
+
                     <input
                         type="range"
                         id="mod-index"
@@ -156,7 +158,7 @@
                     /><br />
                 </div>
 
-                <!--Bottom Row---------Vibrator-->
+                <!-----Vibrator---------------------->
                 <div id="vibrato-options">
                     <h2>Vibrato</h2>
                     <label for="vibrato-amount-control">Vibrato Amount</label
@@ -181,7 +183,7 @@
                     /><br />
                 </div>
 
-                <!-- <- Controls -----------!-------------->
+                <!--Delay Controls ------------------------->
                 <div id="delay-options">
                     <h2>Delay</h2>
                     <label for="delay-time-control">Delay Time</label><br />
@@ -230,7 +232,7 @@
                 <div data-note="Bb" class="key black"></div>
                 <div data-note="B" class="key white"></div>
             </div>
-            <!--Keyboard Note Audio Files-->
+            <!------------Keyboard Note Audio Files-->
             <audio id="C" src="./notes/notes_C.mp3"></audio>
             <audio id="Db" src="./notes/notes_Db.mp3"></audio>
             <audio id="D" src="./notes/notes_D.mp3"></audio>
@@ -244,6 +246,5 @@
             <audio id="Bb" src="./notes/notes_Bb.mp3"></audio>
             <audio id="B" src="./notes/notes_B.mp3"></audio>
         </div>
-      
     </body>
 </html>

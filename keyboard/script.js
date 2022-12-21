@@ -3,7 +3,7 @@
 
 
 
-/// 1. Context and Master Volume
+/// 1. Context and Master Volume ---------------------------------------------------------------------------------
 
 // -- Audio Context for window
 var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -23,7 +23,9 @@ volumeControl.addEventListener("input", function () {
     masterVolume.gain.value = this.value;
 });
 
-// 2.  Notes -- Array of frequencies split into semitones -- numbers indicative of frequencies
+// 2.  Notes ---------------------------------------------------------------------------------------------------
+
+//-- Array of frequencies split into semitones(numbers indicative of frequencies)
 
 const notes = {
     C4: 261.63,
@@ -83,7 +85,8 @@ function setCurrentNotes() {
 
 setNoteSelects();
 
-// -- Wave Form Selection
+// 3.  Wave Form Selection ------------------------------------------------------------------------------------------
+
 const waveforms = document.getElementsByName("waveform");
 let waveform = "sine";
 
@@ -94,6 +97,8 @@ function setWaveform() {
             waveform = waveforms[i].value;
         }
     }
+
+    // -- hide FM sliders by default
 
     if (waveform != "fm") {
         // Hide the harmonicity controls by default
@@ -133,15 +138,15 @@ waveforms.forEach((waveformInput) => {
     });
 });
 
-//------------- Effect Controls
+// 4. Effect Controls ------------------------------------------------------------------------------------
 
-// Envelope
+//-- Envelope
 let attackTime = 0.3;
 let sustainLevel = 0.8;
 let releaseTime = 0.3;
 let noteLength = 1;
 
-// Document Query Selectors
+//-- Document Query Selectors
 
 const attackControl = document.querySelector("#attack-control");
 const releaseControl = document.querySelector("#release-control");
@@ -164,7 +169,7 @@ noteLengthControl.addEventListener("input", function () {
     console.log("note length adjusted");
 });
 
-// Vibrato
+//-- Vibrato
 let vibratoSpeed = 10;
 let vibratoAmount = 0;
 const vibratoAmountControl = document.querySelector("#vibrato-amount-control");
@@ -178,7 +183,7 @@ vibratoSpeedControl.addEventListener("input", function () {
     vibratoSpeed = this.value;
 });
 
-// FM Controls
+//-- Frequency Modulator (FM) Controls
 let Harmonicity = 2;
 let modIndex = 1.2;
 const harmonicityControl = document.querySelector("#harmonicity");
@@ -207,12 +212,12 @@ delay.connect(feedback);
 feedback.connect(delay);
 delay.connect(masterVolume);
 
-// Delay Values
+//-- Delay Values
 delay.delayTime.value = 0;
 delayAmountGain.gain.value = 0;
 feedback.gain.value = 0;
 
-// Delay Functions
+//-- Delay Functions
 
 delayAmountControl.addEventListener("input", function () {
     delayAmountGain.value = this.value;
@@ -242,6 +247,8 @@ tempoControl.addEventListener(
     false
 );
 
+//-- Start and Stop buttons for loop
+
 startButton.addEventListener("click", function () {
     if (!isPlaying) {
         isPlaying = true;
@@ -254,6 +261,8 @@ stopButton.addEventListener("click", function () {
     isPlaying = false;
     console.log("Loop stopped");
 });
+
+//-- Sequencer Loop Functions
 
 function noteLoop() {
     const secondsPerBeat = 60.0 / tempo;
@@ -343,7 +352,7 @@ function playCurrentNote() {
             context.currentTime + noteLength
         );
 
-        //Calculating the frequency of the modulator based on H frequency of the carrier
+        //-- Calculating the frequency of the modulator based on Harmonicity frequency of the carrier
         const Carrier = context.createOscillator();
         var CarrierFrequency =
             Object.values(notes)[`${currentNotes[currentNoteIndex]}`];
@@ -363,7 +372,7 @@ function playCurrentNote() {
         lfo.stop(context.currentTime + noteLength);
         lfo.connect(lfoGain);
 
-        //-- The Modulator
+        //-- Frequency Modulator
         const ModulatorOsc = context.createOscillator();
         //Have to use the current value of the frequency of the carrier Carrier.frequency.value, because it might be
         //constantly changing because of the LFO
@@ -371,9 +380,9 @@ function playCurrentNote() {
         ModulatorOsc.frequency.setValueAtTime(ModulatorFrequency, 0);
         ModulatorOsc.type = "sine";
 
-        //The amplitude of the Modulator, based on H, I and frequency of the carrier.
-        //In Web audio to change the amplitude of the Modulator you need this gain node,
-        //so the output of the modulator can give you some real frequency values.
+        //-- The amplitude of the Modulator, based on Harmonicity Index and frequency of the carrier.
+        //-- In Web audio to change the amplitude of the Modulator you need this gain node
+        //-- so the output of the modulator can give you some real frequency values.
         const Modulator = context.createGain();
         var ModulatorAmplitude = Harmonicity * modIndex * CarrierFrequency;
         Modulator.gain.setValueAtTime(ModulatorAmplitude, 0);
@@ -383,13 +392,13 @@ function playCurrentNote() {
         Carrier.stop(context.currentTime + noteLength);
         ModulatorOsc.stop(context.currentTime + noteLength);
 
-        //connecting the modulator osc to the gain, so we can get some real frequency values
+        //-- Connecting the modulator osc to the gain, so we can get some real frequency values
         ModulatorOsc.connect(Modulator);
 
-        //Connecting the Modulator output to the frequency parameter of the carier
+        //-- Connecting the Modulator output to the frequency parameter of the carier
         Modulator.connect(Carrier.frequency);
 
-        //Carrier.connect(context.destination);
+        //-- Carrier.connect(context.destination);
         Carrier.connect(noteGain);
 
         noteGain.connect(masterVolume);
@@ -397,7 +406,7 @@ function playCurrentNote() {
     }
 }
 
-//--------------------------------------------------------------------- Keyboard
+// 5. Keyboard ----------------------------------------------------------------------------------
 
 // Arrays of computer keyboard keys
 const WHITE_KEYS = ["z", "x", "c", "v", "b", "n", "m"];
@@ -437,47 +446,3 @@ function playNote(key) {
         key.classList.remove("active");
     });
 }
-// const Visualizer = () => {
-//     const synth = useSynth();
-//     const canvasRef = useRef(null);
-
-//     useEffect(() => {
-//         const ctx = canvasRef.current.getContext("2d");
-//         const cw = canvasRef.current.width;
-//         const ch = canvasRef.current.height;
-//         const chh = Math.round(ch * 0.5);
-//         ctx.fillStyle = "red";
-//         ctx.strokeStyle = "red";
-
-//         let canDraw = true;
-
-//         const draw = () => {
-//             try {
-//                 if (canDraw) requestAnimationFrame(draw);
-//                 ctx.clearRect(0, 0, cw, ch);
-//                 const data = synth.getAnalyserData();
-
-//                 ctx.beginPath();
-//                 ctx.moveTo(0, chh);
-//                 for (let i = 0, ln = data.length; i < ln; i++) {
-//                     ctx.lineTo(i, ch * (data[i] / 255));
-//                 }
-//                 ctx.stroke();
-//             } catch (e) {
-//                 console.log("Ooops", e);
-//                 canDraw = false;
-//             }
-//         };
-
-//         draw();
-//     }, []);
-
-//     return (
-//         <canvas
-//             className="visualizer"
-//             width="128"
-//             height="45"
-//             ref={canvasRef}
-//         />
-//     );
-// };
