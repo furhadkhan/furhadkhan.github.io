@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 // /* eslint-disable no-undef */
 
-
-
 /// 1. Context and Master Volume ---------------------------------------------------------------------------------
 
 // -- Audio Context for window
@@ -21,6 +19,7 @@ const volumeControl = document.querySelector("#volume-control");
 //-- Event listener to adjust volume levels
 volumeControl.addEventListener("input", function () {
     masterVolume.gain.value = this.value;
+    console.log("volume adjusted");
 });
 
 // 2.  Notes ---------------------------------------------------------------------------------------------------
@@ -114,7 +113,6 @@ function setWaveform() {
 
         let modIndexLabel = document.getElementById("mod-index-label");
         modIndexLabel.setAttribute("hidden", "hidden");
-        
     } else {
         // Show harmonicity controls
         let harmonicitySlider = document.getElementById("harmonicity");
@@ -177,10 +175,12 @@ const vibratoSpeedControl = document.querySelector("#vibrato-speed-control");
 
 vibratoAmountControl.addEventListener("input", function () {
     vibratoAmount = this.value;
+    console.log("vibrato adjusted");
 });
 
 vibratoSpeedControl.addEventListener("input", function () {
     vibratoSpeed = this.value;
+    console.log("vibrato speed adjusted");
 });
 
 //-- Frequency Modulator (FM) Controls
@@ -191,10 +191,12 @@ const modIndexControl = document.querySelector("#mod-index");
 
 harmonicityControl.addEventListener("input", function () {
     Harmonicity = this.value;
+    console.log("harmonicity adjusted");
 });
 
 modIndexControl.addEventListener("input", function () {
     modIndex = this.value;
+    console.log("modulator index adjusted");
 });
 
 //--- Delay
@@ -221,14 +223,17 @@ feedback.gain.value = 0;
 
 delayAmountControl.addEventListener("input", function () {
     delayAmountGain.value = this.value;
+    console.log("delay amount adjusted");
 });
 
 delayTimeControl.addEventListener("input", function () {
     delay.delayTime.value = this.value;
+    console.log("delay length adjusted");
 });
 
 feedbackControl.addEventListener("input", function () {
     feedback.gain.value = this.value;
+    console.log("feedback control adjusted");
 });
 
 //-- Loop Controls and Functions
@@ -243,6 +248,7 @@ tempoControl.addEventListener(
     "input",
     function () {
         tempo = Number(this.value);
+        console.log("tempo adjusted");
     },
     false
 );
