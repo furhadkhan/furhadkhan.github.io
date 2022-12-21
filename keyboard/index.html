@@ -80,8 +80,49 @@
                         name="waveform"
                         value="sawtooth"
                     />
-                    <label for="sawtooth-wave">Sawtooth Wave</label>
+                    <label for="sawtooth-wave">Sawtooth Wave</label><br />
+
+                    <input
+                        type="radio"
+                        id="freq-mod"
+                        name="waveform"
+                        value="fm"
+                    />
+                    <label for="freq-mod">Freq Mod</label><br />
+
+                    <input
+                        type="range"
+                        id="harmonicity"
+                        name="harmonicity"
+                        min="0"
+                        max="10"
+                        value="2"
+                        step="any"
+                        hidden="hidden"
+                    />
+                    <label
+                        for="harmonicity"
+                        id="harmonicity-label"
+                        hidden="hidden"
+                        >Harmonicity</label
+                    ><br />
+
+                    <input
+                        type="range"
+                        id="mod-index"
+                        name="modIndex"
+                        min="0"
+                        max="10"
+                        value="1.2"
+                        step="any"
+                        hidden="hidden"
+                    />
+                    <label for="modIndex" id="mod-index-label" hidden="hidden"
+                        >Index</label
+                    ><br />
                 </div>
+
+                <!---------Envelope Options----->
                 <div id="envelope-options">
                     <h2>Envelope</h2>
                     <label for="attack-control">Attack Time</label><br />
@@ -113,7 +154,7 @@
                     /><br />
                 </div>
 
-                <!-- Bottom Row --------- Vibrator  -->
+                <!--Bottom Row---------Vibrator-->
                 <div id="vibrato-options">
                     <h2>Vibrato</h2>
                     <label for="vibrato-amount-control">Vibrato Amount</label
@@ -123,7 +164,7 @@
                         id="vibrato-amount-control"
                         value="0"
                         min="0"
-                        max="5"
+                        max="10"
                         step="0.5"
                     /><br />
                     <label for="vibrato-amount-control">Vibrato Speed</label
@@ -170,7 +211,9 @@
                     />
                 </div>
             </div>
-            <!-- <canvas id="visualiser"></canvas> -->
+            <!-- <canvas id="visualiser"></canvas> --REMOVED----->
+
+            <!------------Keyboard---------->
             <div id="keyboard">
                 <div data-note="C" class="key white"></div>
                 <div data-note="Db" class="key black"></div>
@@ -185,6 +228,7 @@
                 <div data-note="Bb" class="key black"></div>
                 <div data-note="B" class="key white"></div>
             </div>
+            <!--Keyboard Note Audio Files-->
             <audio id="C" src="./notes/notes_C.mp3"></audio>
             <audio id="Db" src="./notes/notes_Db.mp3"></audio>
             <audio id="D" src="./notes/notes_D.mp3"></audio>

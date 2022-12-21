@@ -90,6 +90,36 @@ function setWaveform() {
             waveform = waveforms[i].value;
         }
     }
+
+    if (waveform != "fm") {
+        // Hide the harmonicity controls
+        let harmonicitySlider = document.getElementById("harmonicity");
+        harmonicitySlider.setAttribute("hidden", "hidden");
+
+        let harmonicityLabel = document.getElementById("harmonicity-label");
+        harmonicityLabel.setAttribute("hidden", "hidden");
+
+        // Hide the modulation index controls
+        let modIndexSlider = document.getElementById("mod-index");
+        modIndexSlider.setAttribute("hidden", "hidden");
+
+        let modIndexLabel = document.getElementById("mod-index-label");
+        modIndexLabel.setAttribute("hidden", "hidden");
+    } else {
+        // Show harmonicity controls
+        let harmonicitySlider = document.getElementById("harmonicity");
+        harmonicitySlider.removeAttribute("hidden");
+
+        let harmonicityLabel = document.getElementById("harmonicity-label");
+        harmonicityLabel.removeAttribute("hidden");
+
+        // Show modulation index controls
+        let modIndexSlider = document.getElementById("mod-index");
+        modIndexSlider.removeAttribute("hidden");
+
+        let modIndexLabel = document.getElementById("mod-index-label");
+        modIndexLabel.removeAttribute("hidden");
+    }
 }
 
 waveforms.forEach((waveformInput) => {
@@ -106,9 +136,13 @@ let sustainLevel = 0.8;
 let releaseTime = 0.3;
 let noteLength = 1;
 
+// Document Query Selectors
+
 const attackControl = document.querySelector("#attack-control");
 const releaseControl = document.querySelector("#release-control");
 const noteLengthControl = document.querySelector("#note-length-control");
+
+//-- Functions to adjust Envelope Controls
 
 attackControl.addEventListener("input", function () {
     attackTime = Number(this.value);
@@ -139,7 +173,23 @@ vibratoSpeedControl.addEventListener("input", function () {
     vibratoSpeed = this.value;
 });
 
-// Delay
+// FM Controls
+let Harmonicity = 2;
+let modIndex = 1.2;
+const harmonicityControl = document.querySelector("#harmonicity");
+const modIndexControl = document.querySelector("#mod-index");
+
+harmonicityControl.addEventListener("input", function () {
+    Harmonicity = this.value;
+});
+
+modIndexControl.addEventListener("input", function () {
+    modIndex = this.value;
+});
+
+//--- Delay
+
+// variables
 const delayAmountControl = document.querySelector("#delay-amount-control");
 const delayTimeControl = document.querySelector("#delay-time-control");
 const feedbackControl = document.querySelector("#feedback-control");
@@ -152,9 +202,12 @@ delay.connect(feedback);
 feedback.connect(delay);
 delay.connect(masterVolume);
 
+// Delay Values
 delay.delayTime.value = 0;
 delayAmountGain.gain.value = 0;
 feedback.gain.value = 0;
+
+// Delay Functions
 
 delayAmountControl.addEventListener("input", function () {
     delayAmountGain.value = this.value;
@@ -168,7 +221,7 @@ feedbackControl.addEventListener("input", function () {
     feedback.gain.value = this.value;
 });
 
-//LOOP CONTROLS
+//-- Loop Controls and Functions
 const startButton = document.querySelector("#start-button");
 const stopButton = document.querySelector("#stop-button");
 const tempoControl = document.querySelector("#tempo-control");
@@ -221,46 +274,122 @@ function nextNote() {
     }
 }
 
+//-------------------------- Main Loop Function --- Integrates Low Frequency Oscillator & Frequency Modulator
+
 function playCurrentNote() {
-    const osc = context.createOscillator();
-    const noteGain = context.createGain();
-    noteGain.gain.setValueAtTime(0, 0);
-    noteGain.gain.linearRampToValueAtTime(
-        sustainLevel,
-        context.currentTime + noteLength * attackTime
-    );
-    // -- currentTime allows for more precise control over timeline -- current time of our audio Context
-    noteGain.gain.setValueAtTime(
-        sustainLevel,
-        context.currentTime + noteLength - noteLength * releaseTime
-    );
-    //--- Allows us to change a value over time - similar to setValueAtTime
-    noteGain.gain.linearRampToValueAtTime(0, context.currentTime + noteLength);
+    if (waveform != "fm") {
+        const osc = context.createOscillator();
+        const noteGain = context.createGain();
+        noteGain.gain.setValueAtTime(0, 0);
+        noteGain.gain.linearRampToValueAtTime(
+            sustainLevel,
+            context.currentTime + noteLength * attackTime
+        );
+        // -- currentTime allows for more precise control over timeline -- current time of our audio Context
+        noteGain.gain.setValueAtTime(
+            sustainLevel,
+            context.currentTime + noteLength - noteLength * releaseTime
+        );
+        //--- Allows us to change a value over time - similar to setValueAtTime
+        noteGain.gain.linearRampToValueAtTime(
+            0,
+            context.currentTime + noteLength
+        );
 
-    // -- LFO (Low Frequency Oscillator) connected to Wave Oscillator Frequency output to control Vibrato
-    // -- Value of LFO is the output of the oscillator producing the wave sound
-    lfoGain = context.createGain();
-    lfoGain.gain.setValueAtTime(vibratoAmount, 0);
-    lfoGain.connect(osc.frequency);
+        // -- LFO (Low Frequency Oscillator) connected to Wave Oscillator Frequency output to control Vibrato
+        // -- Value of LFO is the output of the oscillator producing the wave sound
+        lfoGain = context.createGain();
+        lfoGain.gain.setValueAtTime(vibratoAmount, 0);
+        lfoGain.connect(osc.frequency);
 
-    //-- LFO connected to current Time, Note Array and new LFO Gain Node (volume)
-    lfo = context.createOscillator();
-    lfo.frequency.setValueAtTime(vibratoSpeed, 0);
-    lfo.start(0);
-    lfo.stop(context.currentTime + noteLength);
-    lfo.connect(lfoGain);
+        //-- LFO connected to current Time, Note Array and new LFO Gain Node (volume)
+        lfo = context.createOscillator();
+        lfo.frequency.setValueAtTime(vibratoSpeed, 0);
+        lfo.start(0);
+        lfo.stop(context.currentTime + noteLength);
+        lfo.connect(lfoGain);
 
-    osc.type = waveform;
-    osc.frequency.setValueAtTime(
-        Object.values(notes)[`${currentNotes[currentNoteIndex]}`],
-        0
-    );
-    osc.start(0);
-    osc.stop(context.currentTime + noteLength);
-    osc.connect(noteGain);
+        osc.type = waveform;
+        osc.frequency.setValueAtTime(
+            Object.values(notes)[`${currentNotes[currentNoteIndex]}`],
+            0
+        );
+        osc.start(0);
+        osc.stop(context.currentTime + noteLength);
+        osc.connect(noteGain);
 
-    noteGain.connect(masterVolume);
-    noteGain.connect(delay);
+        noteGain.connect(masterVolume);
+        noteGain.connect(delay);
+    } else {
+        const noteGain = context.createGain();
+        noteGain.gain.setValueAtTime(0, 0);
+        noteGain.gain.linearRampToValueAtTime(
+            sustainLevel,
+            context.currentTime + noteLength * attackTime
+        );
+        // -- currentTime allows for more precise control over timeline -- current time of our audio Context
+        noteGain.gain.setValueAtTime(
+            sustainLevel,
+            context.currentTime + noteLength - noteLength * releaseTime
+        );
+        //--- Allows us to change a value over time - similar to setValueAtTime
+        noteGain.gain.linearRampToValueAtTime(
+            0,
+            context.currentTime + noteLength
+        );
+
+        //Calculating the frequency of the modulator based on H frequency of the carrier
+        const Carrier = context.createOscillator();
+        var CarrierFrequency =
+            Object.values(notes)[`${currentNotes[currentNoteIndex]}`];
+        Carrier.type = "sine";
+        Carrier.frequency.setValueAtTime(CarrierFrequency, 0);
+
+        // -- LFO (Low Frequency Oscillator) connected to Wave Oscillator Frequency output to control Vibrato
+        // -- Value of LFO is the output of the oscillator producing the wave sound
+        lfoGain = context.createGain();
+        lfoGain.gain.setValueAtTime(vibratoAmount, 0);
+        lfoGain.connect(Carrier.frequency);
+
+        //-- LFO connected to current Time, Note Array and new LFO Gain Node (volume)
+        lfo = context.createOscillator();
+        lfo.frequency.setValueAtTime(vibratoSpeed, 0);
+        lfo.start(0);
+        lfo.stop(context.currentTime + noteLength);
+        lfo.connect(lfoGain);
+
+        //-- The Modulator
+        const ModulatorOsc = context.createOscillator();
+        //Have to use the current value of the frequency of the carrier Carrier.frequency.value, because it might be
+        //constantly changing because of the LFO
+        var ModulatorFrequency = Harmonicity * Carrier.frequency.value;
+        ModulatorOsc.frequency.setValueAtTime(ModulatorFrequency, 0);
+        ModulatorOsc.type = "sine";
+
+        //The amplitude of the Modulator, based on H, I and frequency of the carrier.
+        //In Web audio to change the amplitude of the Modulator you need this gain node,
+        //so the output of the modulator can give you some real frequency values.
+        const Modulator = context.createGain();
+        var ModulatorAmplitude = Harmonicity * modIndex * CarrierFrequency;
+        Modulator.gain.setValueAtTime(ModulatorAmplitude, 0);
+
+        Carrier.start();
+        ModulatorOsc.start();
+        Carrier.stop(context.currentTime + noteLength);
+        ModulatorOsc.stop(context.currentTime + noteLength);
+
+        //connecting the modulator osc to the gain, so we can get some real frequency values
+        ModulatorOsc.connect(Modulator);
+
+        //Connecting the Modulator output to the frequency parameter of the carier
+        Modulator.connect(Carrier.frequency);
+
+        //Carrier.connect(context.destination);
+        Carrier.connect(noteGain);
+
+        noteGain.connect(masterVolume);
+        noteGain.connect(delay);
+    }
 }
 
 //--------------------------------------------------------------------- Keyboard
