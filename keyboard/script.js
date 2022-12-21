@@ -1,5 +1,8 @@
 /* eslint-disable no-undef */
 // /* eslint-disable no-undef */
+
+
+
 /// 1. Context and Master Volume
 
 // -- Audio Context for window
@@ -80,10 +83,11 @@ function setCurrentNotes() {
 
 setNoteSelects();
 
-//WAVEFORM SELECT
+// -- Wave Form Selection
 const waveforms = document.getElementsByName("waveform");
 let waveform = "sine";
 
+//-- Function to Set Wave Form
 function setWaveform() {
     for (var i = 0; i < waveforms.length; i++) {
         if (waveforms[i].checked) {
@@ -92,7 +96,7 @@ function setWaveform() {
     }
 
     if (waveform != "fm") {
-        // Hide the harmonicity controls
+        // Hide the harmonicity controls by default
         let harmonicitySlider = document.getElementById("harmonicity");
         harmonicitySlider.setAttribute("hidden", "hidden");
 
@@ -105,6 +109,7 @@ function setWaveform() {
 
         let modIndexLabel = document.getElementById("mod-index-label");
         modIndexLabel.setAttribute("hidden", "hidden");
+        
     } else {
         // Show harmonicity controls
         let harmonicitySlider = document.getElementById("harmonicity");
