@@ -24,7 +24,7 @@ volumeControl.addEventListener("input", function () {
 
 // 2.  Notes ---------------------------------------------------------------------------------------------------
 
-//-- Array of frequencies split into semitones(numbers indicative of frequencies)
+//-- Notes Object - Frequencies split into semitones(numbers indicative of frequencies)
 
 const notes = {
     C4: 261.63,
@@ -60,6 +60,7 @@ for (let i = 0; i <= 7; i++) {
         option.innerText = `${Object.keys(notes)[j]}`;
         // append child, event listener
         select.appendChild(option);
+        // event listener to set current note
         select.addEventListener("change", setCurrentNotes);
     }
     noteSelectsDiv.appendChild(select);
@@ -347,7 +348,7 @@ function playCurrentNote() {
             sustainLevel,
             context.currentTime + noteLength * attackTime
         );
-        // -- currentTime allows for more precise control over timeline -- current time of our audio Context
+        // -- currentTime allows for more precise control over timeline -- current time of our Audio Context
         noteGain.gain.setValueAtTime(
             sustainLevel,
             context.currentTime + noteLength - noteLength * releaseTime
@@ -418,6 +419,7 @@ function playCurrentNote() {
 const WHITE_KEYS = ["z", "x", "c", "v", "b", "n", "m"];
 const BLACK_KEYS = ["s", "d", "g", "h", "j"];
 
+// Link computer keyboard keys with piano keyboard keys
 const keys = document.querySelectorAll(".key");
 const whiteKeys = document.querySelectorAll(".key.white");
 const blackKeys = document.querySelectorAll(".key.black");
